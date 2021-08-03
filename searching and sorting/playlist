@@ -1,0 +1,24 @@
+Here you have to find out the non-repeating sequence.
+For that we will use two pointer and then a map to corrospoind to the previous index of this element.
+
+Here j will be propagating and i will use to contract. 
+
+int n;
+cin>>n;
+VI arr(n);
+rep(i , 0 , n){
+    cin>>arr[i];
+}
+int i = -1 , j = 0;
+map<int,int> M;
+int ans = 0 , mx = 0;
+while(j < n){
+    if(M.find(arr[j]) != M.end()){
+        i = max(i , M[arr[j]]);                            // This step ins crucial because here you have to neglect case when this is repeating but not in my current subarray.
+    }
+    ans = max(ans, j - i);
+    M[arr[j]] = j;
+    j++;
+}
+
+cout<<ans;

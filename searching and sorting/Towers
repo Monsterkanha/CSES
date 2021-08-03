@@ -1,0 +1,21 @@
+Here, for each element i will find its upperbound and put that on the top of the upperbound.
+
+if there is no upper bound for my current element then you have to push_back this element else change at that index.
+
+int n;
+cin>>n;
+VI arr(n);
+rep(i , 0 , n)  cin>>arr[i];
+VI ans = {arr[0]};
+
+for(int i = 1; i < n; i++){
+    auto it = upper_bound(all(ans),arr[i]);
+
+    if(it == ans.end()){
+        ans.push_back(arr[i]);
+    }
+    else
+        ans[it-ans.begin()] = arr[i];
+}
+int res = ans.size();
+cout<<res;

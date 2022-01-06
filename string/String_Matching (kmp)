@@ -1,0 +1,61 @@
+
+i = lps[i-1]   // here if current is not propagating my current lps. may it could propogate some smaller prefix.
+
+eg.                  i                     j
+a    b    a    b     c   $   a   b   a  b  a  b  a
+----------------------       ---------------   
+0    0    1     2     0  0    1  2   3   4 
+  
+now at this index j my i is at c.   now a != c so we will try if this j could be part of some smaller prefix. 
+
+thats why we move to i  = lps[i-1]  
+
+eg.       i                                j
+a    b    a    b     c   $   a   b   a  b  a  b  a
+-----------                          -------
+0    0    1     2     0  0    1  2   3   4 
+  
+ now again we check s[j] == s[i] now it matches. so break our loop. 
+ if the two are matching increment i. 
+ 
+ i = 2; 
+ point to next index to look for . 
+
+
+
+
+Code :- 
+
+#include<bits/stdc++.h>
+#define nl "\n"
+
+using namespace std;
+
+int kmp(string s, int req){
+    int n = s.size();
+    vector<int> lps(n, 0);    // lps[i] will tells the length of longest prefix = length of longest suffix ending at index j.
+
+    int i = 0 , j = 1;
+    while(j < n){
+        while(i > 0 && s[i] != s[j]){             // This is conceptual part. Try to visualise this.
+                                                  
+            i = lps[i-1];
+        }
+        if(s[i] == s[j]) i++;
+        lps[j] = i;
+        j++;
+    }
+    int ans = 0;
+    for(auto x: lps){
+        if(x == req)    ans++;
+    }
+    return ans;
+    
+}
+
+int main(){
+    string s, t;
+    cin>>s>>t;
+    cout<<kmp(t + '$' + s, t.size())<<nl;
+
+}

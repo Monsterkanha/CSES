@@ -1,0 +1,56 @@
+Same concept of kmp, but 
+
+to get more borders . 
+
+while(j > 0){
+    ans.push_back(j);
+    j = lps[j-1];
+}
+
+eg. 
+0   1   2   3   4   5   6   7   8   9
+a   b   c   a   b   a   b   c   a   b
+
+
+0   0   0   1   2   1   2   3   4   5       lps table. 
+ans =   abcab , ab
+
+first answer is 5 length, now it could be break down into smaller one. i = lps[i-1]; 
+
+
+
+#include<bits/stdc++.h>
+#define nl "\n"
+
+using namespace std;
+
+void solve(string s){
+    int n = s.size();
+    vector<int> lps(n, 0);
+
+    int i = 0 , j = 1;
+    while(j < n){
+        while(i > 0 && s[i] != s[j]){
+            i = lps[i-1];
+        }
+        if(s[i] == s[j]) i++;
+        lps[j] = i;
+        j++;
+    }
+    j = lps[n-1];
+    vector<int> ans;
+    while(j > 0){
+        ans.push_back(j);
+        j = lps[j-1];
+    }
+    for(int i = ans.size() - 1; i >= 0; i--) cout<<ans[i]<<" ";
+    cout<<nl;
+    
+}
+
+int main(){
+    string s;
+    cin>>s;
+    solve(s);
+
+}

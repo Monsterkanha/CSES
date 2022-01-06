@@ -1,0 +1,57 @@
+class WordDictionary {
+public:
+    struct TrieNode{
+        int end;
+        TrieNode* child[26];
+        
+        TrieNode(){    // Constructor.
+            end = 0;
+            memset(child, NULL, sizeof(child));   // All starting to NULL;
+        }
+    };
+    TrieNode* root;
+    WordDictionary() {  // This is constructor. called when object is created.
+        root = new TrieNode();   // Use to initialize some value.
+    }
+    
+    void addWord(string word) {
+        TrieNode* curr = root;
+        for(auto x: word){
+            if(!curr->child[x-'a']) curr->child[x-'a'] = new TrieNode();           // If pointer to this node not already present then create new one. 
+                                                                                   // Note :- bracket means we are calling via its constructor. 
+            curr = curr->child[x-'a'];   
+        }
+        curr->end += 1;     // This marks end, this is very important. 
+    }
+    
+    bool TrieSearch(string word, TrieNode* curr){
+        for(int i = 0 ; i < word.size(); i++){
+            if(word[i] != '.'){                // If this is char then point to that must exist.
+                if(!curr->child[word[i]-'a']) return false;
+                curr = curr->child[word[i]-'a'];
+            }
+            else{      // To handle wild card.
+                bool found = false;
+                int j = 0; 
+                for(; j < 26; j++){
+                    if(curr->child[j]) found |= TrieSearch(word.substr(i+1) , curr->child[j]);   // Backtracking. 
+                    if(found) return true;  
+                }
+                if(j == 26) return false;  // If none of the child gave value true. 
+            }
+        }
+        return curr->end;   // Check whether word really end at this point.
+    }
+    
+    bool search(string word) {
+        return TrieSearch(word, root);
+        
+    }
+};
+
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary* obj = new WordDictionary();
+ * obj->addWord(word);
+ * bool param_2 = obj->search(word);
+ */

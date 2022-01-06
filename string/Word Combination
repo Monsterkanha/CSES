@@ -1,0 +1,106 @@
+Here, We create dp.
+dp[i] = number of ways we can make string from index i to n using dictonaries.
+
+induction step.
+We do reverse searching and if current word is end then we can add answer of dp[i+1] to it. 
+it means answer will going to be increase by dp[i+1], 
+
+assume, current string     from index idx to i and then we have answer for dp[i+1] means number of ways we can make string from index i to n.
+
+This way we can get total number of ways.
+
+
+
+
+#include<bits/stdc++.h> 
+
+using namespace std;
+
+int mod = 1e9 + 7;
+class Trie {
+public:
+    
+    
+    struct TrieNode{
+        int end;
+        TrieNode* child[26];
+        
+        TrieNode(){
+            end = 0;
+            for(int i = 0 ; i < 26; i++){
+                child[i] = NULL;
+            }
+        }
+    };
+    
+    TrieNode* root;
+    
+    Trie() {
+        root = new TrieNode();
+    }
+    
+    void insert(string word) {
+        TrieNode* curr = root;
+        for(auto c: word){
+            if(!curr->child[c-'a']) curr->child[c-'a'] = new TrieNode();
+            curr = curr->child[c-'a'];
+        }
+        curr->end += 1;
+    }
+    
+    
+    int search(int x, vector<int>& dp, string word) {
+        int ans = 0;
+        TrieNode* curr = root;
+        for(int i = x ; i < word.size() ; i++){   
+            if(!curr->child[word[i] - 'a']) return ans;     // Whatever answer we got return since there will be now no more matching.
+            curr = curr->child[word[i]-'a'];
+
+            if(curr->end){     // If current node is end of any word means we can add dp[i+1] to it.
+                (ans += dp[i+1])%=mod;
+            }
+        }
+        return ans;   // time to return the answer we have collected.
+    }
+    
+    // bool startsWith(string prefix) {
+    //     return TrieSearch(prefix, root, 0);
+    // }
+};
+
+
+
+int main(){
+    Trie* obj = new Trie();
+    
+
+    string s;
+    cin>>s;
+
+    int t;
+    cin>>t;
+
+    while(t--){
+        string temp;
+        cin>>temp;
+        obj->insert(temp);
+    }
+    int n = s.size();
+    vector<int> dp(n + 1);
+    dp[n] = 1;
+
+    for(int i = n-1; i >= 0; i--){
+        dp[i] = obj->search(i, dp, s);
+    }
+    cout<<dp[0]<<"\n";
+
+
+}
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie* obj = new Trie();
+ * obj->insert(word);
+ * bool param_2 = obj->search(word);
+ * bool param_3 = obj->startsWith(prefix);
+ */

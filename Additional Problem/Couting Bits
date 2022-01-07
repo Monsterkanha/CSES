@@ -1,0 +1,62 @@
+Here, for given n find total number of set bits for integers 1 to n.
+
+1. using dp
+
+here dp[i][j] will tells how many digits <= j have ith bit set .
+
+to construct this => prefix table type concept.
+vector<vector<int>> dp(31, vector<int>(n+1));
+for(int i = 0 ; i < 31; i++){
+  for(int j = 1; j <= n; j++){
+      dp[i][j] = dp[i-1][j] + ((j >> i) & 1);
+  }
+}
+
+
+2. Using mathematics.
+
+for ith bit set. 
+
+ans = n/(2^(i+1))*(2^i) + max(0LL, n%(2^(i+1)) - 2^i + 1);
+
+eg. 
+
+
+0 0 0
+0 0 1
+0 1 0
+0 1 1
+1 0 0
+1 0 1
+1 1 0
+1 1 1
+
+number of element having 1st bit set. 
+n/2 + max(remainder part); since appears after 2^i so subtract that.
+
+
+
+ll n;
+cin>>n;
+ll ans = 0;
+for(int i = 0; i <= 50; i++){
+    ans += (n/(ll)(pow(2,i+1))*((ll)pow(2,i)) + max(0LL ,  n%((ll)(pow(2,i+1))) - (ll)pow(2,i) +1 ));
+}
+cout<<ans<<nl;
+
+
+
+Or. 
+void solve(){
+  ll n;
+  cin>>n;
+  ll ans = 0;
+
+  ll NxtPower = 2 , CurrPower = 1; 
+  for(int i = 0; i <= 50; i++){
+      ans += (n/NxtPower)*CurrPower + max(0LL, n%NxtPower - CurrPower +1);
+      CurrPower = NxtPower;
+      NxtPower *= 2LL;
+  }
+  cout<<ans<<nl;
+}

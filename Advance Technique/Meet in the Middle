@@ -1,0 +1,112 @@
+You are given an array of n numbers. In how many ways can you choose a subset of the numbers with sum x?
+
+Constraint n <= 40. 
+The idea is to divide the array into two parts and calculate each subsequence sum. 
+For calculating that sum we use bit masking concept.
+
+eg. 
+arr = 1 2 3 4 5
+mask will go from 0 to 2^5 - 1
+
+so mask 
+
+0 0 0 0 0
+0 0 0 0 1
+0 0 0 1 0
+...
+
+So for each mask, We iterate for each index the set bit in mask means we have to take this position element of array.
+eg. mask = 0  1 0 1 0
+
+so ((mask >> i) & 1) for
+i = 0 will be 0 
+i = 1 => 1
+i = 2 => 0
+i = 3 => 1
+i = 4 => 0;
+
+so will add arr[1] and arr[3] so we got new combination. 
+
+
+
+This is the code for the idea. 
+
+        for(int mask = 0; mask < (1 << N); mask++){ 
+            long long l = 0;
+            for(int j = 0; j < N; j++){
+                if((mask >> j) & 1){
+                    l += left[j];
+                }
+            }
+            Ml[l]++;    // L will contain current considered combination sum.
+        }
+        
+
+
+Full code. 
+
+
+Custom_hash is used because normal unordered_map giving tle.
+
+
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
+void solve(){
+    int n,x;
+    cin>>n>>x;
+    vector<int> left, right;
+    for(int i= 0; i < n/2; i++){
+        int a;
+        cin>>a;
+        left.push_back(a);
+    }
+    for(int i = n/2; i < n; i++){
+        int a ;
+        cin>>a;
+        right.push_back(a);
+    }
+
+    unordered_map<ll,ll,custom_hash> Ml , Mr;
+    int ll = left.size();
+    
+    for(int mask = 0; mask < (1 << ll); mask++){ 
+        long long l = 0;
+        for(int j = 0; j < ll; j++){
+            if((mask >> j) & 1){
+                l += left[j];
+            }
+        }
+        Ml[l]++;
+    }
+    int lr = right.size();
+    long long ans = 0;
+    
+    for(int mask = 0; mask < (1 << lr); mask++){ 
+        long long l = 0;
+        for(int j = 0; j < lr; j++){
+            if((mask >> j) & 1){
+                l += right[j];
+            }
+        }
+        if(Ml.count(x-l))   ans += Ml[x-l];    // Adding the number of timing required sum we got from first half of the array.
+        
+    }
+    
+    
+    cout<<ans<<nl;
+
+    
+}
+        

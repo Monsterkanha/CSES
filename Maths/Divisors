@@ -1,0 +1,17 @@
+VI divisors(int a , VI& div){
+    int cnt = 1;
+    div.PB(1);
+    for(int i = 2; i <= sqrt(a) ; i++){
+        if(a%i == 0){
+            if(a/i ==i){
+                div.PB(i);
+            }
+            else{
+                div.PB(i);
+                div.PB(a/i);
+            }
+        }
+    }
+    div.PB(a);
+    return div;
+}

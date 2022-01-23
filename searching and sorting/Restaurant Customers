@@ -56,3 +56,59 @@ for (auto x : vals) {
     sum += x.s;
     ans = max(ans, sum);         // Store to maximum answer.
 }
+
+
+3 rd using coordinate compression.
+We can do better. It's easy to see that an increment of $x$ (before computation)
+in $\texttt{arr}[i]$ causes all subsequent $\texttt{prefix}[i...V]$ (after
+computation) to increase by $x$. We can also "undo" this operation by adding
+$-x$ to $\texttt{arr}[i]$. This concept can be conceptualized through increment
+and decrement points. An increment point increases (and decrement decreases) all
+subsequent cells. Note that our decrement point is located at $B+1$ because the
+interval is inclusive - decrementing at point $B$ turns the interval to
+$[A, B)$.
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	int N;
+	cin >> N;
+	vector<pair<int, int>> customers;
+	
+    for (int i = 0; i < N; ++i) {
+		int a, b; cin >> a >> b;
+		customers.push_back({a, 1});
+		customers.push_back({b + 1, -1});
+	}
+
+	sort(customers.begin(), customers.end());
+
+	int curr = 0;
+	int l = 0;
+	vector<long long> pfx(2*N + 1); // prefix sum array
+	vector<int> arr(2*N);
+
+	for (int i = 0; i < 2*N; ++i) { // coordinate compression
+		if(i == 0) { customers[i].first = 0; }
+		else if(customers[i].first > curr) { l++; curr = customers[i].first; } // we move a pointer
+		arr[l+1] += customers[i].second;
+		// pfx[l+1] += customers[i].second; implementation without arr, merges all interval end and starts here
+	}
+    
+
+	for (int i = 1; i < 2*N + 1; ++i) {
+		pfx[i] = arr[i] + pfx[i-1];
+		// pfx[i] += pfx[i-1]; implementation without arr
+	}
+    
+	long long ret = 0;
+
+	for (int i = 0; i < 2*N; ++i)
+		ret = max(ret, pfx[i]); // find our maximum value
+	cout << ret << "\n";
+}

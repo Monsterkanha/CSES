@@ -1,0 +1,58 @@
+Here, first approach sort both the array individually now just two pointer approach.
+
+int ans = 0 , curr = 0;
+curr -> will tell us the current status how many are in the restaurant.
+
+int i = 0;
+while(i < n ){
+  if(arr[i] < dep[j]) curr++ , i++;           //new customer arrived so current status increase.
+  else curr-- , j++;
+  
+  ans = max(curr, ans);
+  
+}
+
+eg. 
+i
+2 3 6 7         curr = 0
+4 5 8 9
+j 
+
+  i
+2 3 6 7         curr = 1 
+4 5 8 9
+j 
+ 
+    i
+2 3 6 7          curr = 2  store to answer.
+4 5 8 9
+j 
+
+now its time for one customer to leave
+
+    i
+2 3 6 7         curr = 1 
+4 5 8 9
+  j
+  
+  
+2. or we can insert arrival with +1, and dep with -1.
++1 will tell us that we have to add this and -1 will tells us this is leaving. just sort the array.
+
+int n; cin >> n;
+vector<pi> vals;
+for (int i = 0; i < n; i++) {
+    int l, r;
+    cin >> l >> r;
+    vals.pb(mp(l, 1));
+    vals.pb(mp(r, -1));
+}
+
+sort(all(vals));
+
+int sum = 0;
+int ans = 0;
+for (auto x : vals) {
+    sum += x.s;
+    ans = max(ans, sum);         // Store to maximum answer.
+}

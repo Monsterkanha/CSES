@@ -1,0 +1,71 @@
+http://www.usaco.org/index.php?page=viewproblem2&cpid=787
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define f first
+#define s second
+#define all(c) c.begin(),c.end() 
+#define ll long long
+
+int32_t main() {
+    freopen("rental.in", "r", stdin);
+	freopen("rental.out", "w", stdout);
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	int n , m , r;
+    cin>>n>>m>>r;
+
+    vector<int> cow(n),rent(r);
+    vector<pair<int,int>> sale(m);
+    for(int i = 0; i < n; i++){
+        cin>>cow[i];
+    }
+    for(int i = 0; i < m; i++){
+        cin>>sale[i].s>>sale[i].f;
+    }
+    for(int i = 0; i < r; i++){
+        cin>>rent[i];
+    }
+    sort(all(cow) , greater<>());
+    sort(all(sale),greater<>());
+    sort(all(rent),greater<>());
+
+    vector<ll> pref(n+1);
+    for(int i = 0; i < n; i++){
+        pref[i+1] = pref[i];
+        if(i < r) pref[i+1] += rent[i];
+    }
+
+    ll ans = pref[n] , milkP = 0;
+    int j = 0;
+    for(int i = 0; i < n; i++){
+        while(j < m && cow[i] >= sale[j].s){
+            milkP += sale[j].f*1LL*sale[j].s;
+            cow[i] -= sale[j].s;
+            sale[j].s = 0;
+            j++;  
+        }
+        if(j < m && cow[i] < sale[j].s){
+            milkP += cow[i]*1LL*sale[j].f;
+            sale[j].s -= cow[i];
+        }
+        ll curr = milkP + pref[n-i-1];
+        ans = max(curr, ans);
+        if(j >= m) break;
+    }
+    cout<<ans<<"\n";
+
+}
+
+// Sort them decreasing order
+
+// Idea is :- answer = max(f(i), g(n-i)) = f(i) money from milk produced by top i cows and and
+// g(i) = money by selling least i cows. store its value in prefix array.
+
+// Now, for f(i) run loop whether sell complete milk or sell the milk required by him. 
+
+
+// Do not use long long everywhere, think about memory as well.

@@ -1,0 +1,101 @@
+http://www.usaco.org/index.php?page=viewproblem2&cpid=786
+
+
+Here, maximum time we can cover if we decide to remove 1 segment.
+
+---------
+  ----------
+     ------
+       ---------
+                   ------
+                   
+1 sort all the segments by their starting time,
+2. Now, calculate the time i would have gotten if i have not removed any.
+for that we require two variable 
+left  that will tell me the last value so far that has been cover.
+
+
+int left = 0 , right = 0, tot = 0;
+for(int i = 0; i < n; i++){
+    if(arr[i].s > right){
+        left = max(right,arr[i].f);
+        tot += arr[i].s - left;
+        right = max(arr[i].s, right);
+    }
+}
+
+.......... -> right
+     ......... -> arr[i].s
+     
+left = max(right, arr[i].f);
+then update the right pointer.
+
+
+now we try to remove each segment then how many point will be going to be uncove.
+eg. 
+
+.........  -> right
+   ..........
+          ......
+ now we will be losing this much range. 
+ 
+ min(arr[i+1].first , arr[i].second) - max(right, arr[i].first);
+ 
+ now update our res = with this minima.
+ 
+ 
+ now res = max(0, res);
+ if res = -ve then we know one interval has completely got overlapped. 
+ 
+ ................
+        ...................................
+                 ........  always better to remove this one so this one will give me negative value. so i am done. 
+             
+             
+             
+             
+             
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define f first
+#define s second
+int main() {
+    // freopen("lifeguards.in", "r", stdin);
+	// freopen("lifeguards.out", "w", stdout);
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	int n;
+    cin>>n;
+
+    vector<pair<int,int>> arr(n);
+    for(int i = 0; i < n; i++){
+        cin>>arr[i].f>>arr[i].s;
+    }
+    sort(arr.begin(), arr.end());
+
+    int left = 0 , right = 0, tot = 0;
+    for(int i = 0; i < n; i++){
+        if(arr[i].s > right){
+            left = max(right,arr[i].f);
+            tot += arr[i].s - left;
+            right = max(arr[i].s, right);
+        }
+    }
+    int res = tot;
+    right = 0;
+    auto last = arr[n-1];
+    last.f = arr[n-1].s;
+    arr.push_back(last);
+    for(int i = 0; i < n; i++){
+        int currRes = min(arr[i+1].f, arr[i].s) - max(right,arr[i].f);
+        res = min(res, currRes);
+        right = max(arr[i].s, right); 
+    }
+    res = max(0 , res);
+    cout<<tot - res<<"\n";
+
+}
+                 

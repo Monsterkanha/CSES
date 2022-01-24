@@ -1,0 +1,64 @@
+Here, we will push back the two boundaries.
+
+and comparision function is very interesting.
+         /
+        / \ 
+       /\  \
+      /\ \  \
+
+here, we will sort first by the basis of their left boundary if having same left boundary. then according to their right bound. but in reverse order.
+
+bool comp(pair<int,int>& a, pair<int,int>& b){
+    if(a.f == b.f){
+        return a.s > b.s;         // To able to cover larger distance in one go.
+    }
+    return a.f < b.f;       // If two mountains left bound is different then they can't be overlapped.
+}
+
+now, we maintain a rightmost that will tell me the rightmost boundary we have got, since the triangles are arranged. 
+so if(arr[i].s <= rightmost) then means it is inside the triangle.
+and if it is whole different trianle then its arr[i].s should have to be greater than rightmost.
+
+
+#include <bits/stdc++.h>
+
+using namespace std;
+#define f first
+#define s second
+#define int long long
+
+bool comp(pair<int,int>& a, pair<int,int>& b){
+    if(a.f == b.f){
+        return a.s > b.s;
+    }
+    return a.f < b.f;
+}
+
+int32_t main() {
+    freopen("mountains.in", "r", stdin);
+	freopen("mountains.out", "w", stdout);
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+    
+    int n;
+    cin>>n;
+
+    vector<pair<int,int>> arr;
+    for(int i = 0; i < n; i++){
+        int x, y;
+        cin>>x>>y;
+        arr.push_back({x-y,x+y});
+    }
+    sort(arr.begin() , arr.end() , comp);
+    int  cnt = 0;
+    int rightmost = -1;
+    for(int i = 0; i < n; i++){
+        if(arr[i].s > rightmost){
+            cnt++;
+            rightmost = arr[i].s;
+        }
+    }
+    cout<<cnt<<"\n";
+}
+
+

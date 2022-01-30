@@ -1,0 +1,98 @@
+(x, y) ---->           
+
+
+                              ^   
+                              |
+                        (u, v)|
+                        
+ Two same direction can never intersect each other so we will have to make two seperate.
+their collision will occur if and only if x < u && y > v and collision point will be (u , y);
+The one that will arrive early will stop another one and get all the blame that was done by that one. 
+But problem is that if that has been already stopped.
+
+
+
+Sort east by their y and north by their x;
+
+#include <bits/stdc++.h>
+
+using namespace std;
+#define f first
+#define s second
+#define ll long long 
+#define pi pair<int,int>
+
+struct cow{
+    int id;
+    pi cor;
+    cow(pi p , int i){
+        cor = p;
+        id = i;
+    }
+};
+
+bool cmp(cow& a, cow& b){
+    if(a.cor.s == b.cor.s){
+        return a.cor.f < b.cor.f;
+    }
+    return a.cor.s < b.cor.s; 
+}
+bool cmp2(cow& a, cow& b){
+    if(a.cor.f == b.cor.f){
+        return a.cor.s < b.cor.s;
+    }
+    return a.cor.f < b.cor.f; 
+}
+void solve(){
+    int n;
+    cin>>n;
+    vector<cow> c_n , c_e; 
+    for(int i = 0; i < n; i++){
+        int x, y; char c;
+        cin>>c;
+        cin>>x>>y;
+        if(c == 'E')    c_e.push_back(cow({x,y}, i));
+        else c_n.push_back(cow({x,y}, i));
+    }
+    sort(c_e.begin() , c_e.end() , cmp);
+    sort(c_n.begin() , c_n.end() , cmp2);
+    int ans = 0;
+    bool stopped[2501];
+    int blame[2501];
+
+    fill(stopped, stopped+n, false);
+	fill(blame, blame+n, 0);
+
+    for(auto &c1: c_e){
+        for(auto &c2: c_n){
+            if(!stopped[c1.id] && !stopped[c2.id] && c1.cor.s >= c2.cor.s && c1.cor.f <= c2.cor.f){
+                int x_t = c2.cor.f - c1.cor.f;
+                int y_t = c1.cor.s - c2.cor.s;
+
+                if(x_t < y_t){
+                    stopped[c2.id] = true;
+                    blame[c1.id] += 1 + blame[c2.id];
+                }
+                else if(x_t > y_t){
+                    stopped[c1.id] = true;
+                    blame[c2.id] += 1 + blame[c1.id];
+                }
+            }
+        }
+    }
+    for(int i= 0; i < n; i++){
+        cout<<blame[i]<<"\n";
+    }
+    
+
+}
+int32_t main() {
+    // freopen("pairup.in", "r", stdin);
+	// freopen("pairup.out", "w", stdout);
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+    solve();
+    
+}
+
+

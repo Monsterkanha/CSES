@@ -1,0 +1,60 @@
+1. We will store all the height and width 
+if height is lesser than width then swap these.
+Now all the heights are greater than their width. 
+
+sort height and now find minimum prefix width and for current minimum width is smaller then answer that,
+
+if height is same then decreasing order of width.
+
+h1 < h2 < h3 < h4 = h5 = h6 < h7 < h8
+
+w1  w2   w3   w4   > w5 > w6  w7 w8
+
+suppose w2 is minimum width for prefix 1 to 4.
+now for h4 if(w4  > w2) then h2 is answer to this else change minimum width to w4. 
+since heights are sorted all prefix heights are lesser only thing is width so store them decreasing order.
+
+
+
+
+struct Friend{
+    int h , w, i;
+};
+
+bool cmp(Friend& a , Friend& b){
+    if(a.h == b.h){
+        return a.w > b.w;
+    }
+    return a.h < b.h;
+}
+void solve(){    
+    int n;
+    cin>>n;
+    vector<Friend> photo(n+1);
+    for(int i = 1 ; i <= n; i++){
+        cin>>photo[i].h>>photo[i].w;
+        if(photo[i].h < photo[i].w ){
+            swap(photo[i].h, photo[i].w);
+        }
+        photo[i].i = i;
+    }
+    sort(photo.begin() + 1, photo.end() , cmp);
+    vector<int> ans(n+1, -1);
+
+    int id = photo[1].i;
+    int y = photo[1].w;     // Minimum width seen so far.
+
+    for(int i = 2; i <= n; i++){
+        if(y < photo[i].w){          // overlap
+            ans[photo[i].i] = id;     
+        }
+        else{
+            y = photo[i].w;       // encounter a new minimum width.
+            id = photo[i].i;
+        }
+    }
+    for(int i = 1; i <= n; i++){
+        cout<<ans[i]<<" ";
+    }
+    cout<<"\n";
+}

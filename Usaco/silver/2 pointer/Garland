@@ -1,0 +1,37 @@
+https://codeforces.com/problemset/problem/814/C
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+int32_t main () {
+	// freopen("diamond.in", "r", stdin);
+	// freopen("diamond.out", "w", stdout);
+	ios_base::sync_with_stdio(0);
+    cin.tie(0);
+	int n , q, m;
+	char c;
+	cin>>n;
+	string s;
+	cin>>s;
+
+	cin>>q;
+	while(q--){
+		cin>>m>>c;
+		int  l = 0 , r = 0 , ans = 0;
+		while(l < n){                            // It is start end of the sliding window. 
+			while(r < n && (s[r] == c || m > 0)){  // r is the end of the window slide it if that character is fav then
+				if(s[r] != c){                       // just increment or if we have to change then also increment.
+					m--;
+				}
+				r++;
+			}
+			ans = max(ans, r - l);	 // r is the end point of the sliding window.
+			if(s[l] != c) m++;   // Time to shrink the left window, so if we have painted this so time to get back our power.
+			l++;
+		}
+		cout<<ans<<"\n";
+	}
+}

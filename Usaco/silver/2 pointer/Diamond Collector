@@ -1,0 +1,87 @@
+http://www.usaco.org/index.php?page=viewproblem2&cpid=643
+
+1. Here, first sort array.
+2. Now lets define a dp that whose state is index i.
+dp[i] will contain the maximum number of coin we can take for index >= i.
+
+where itr = upper_bound index of it.
+for current i if this is first index then we can take i - itr coin + dp[itr] coin.
+
+We will try to build for each lets this is my first coin and now how many coins i can take.
+
+and then update dp.
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int32_t main () {
+	freopen("diamond.in", "r", stdin);
+	freopen("diamond.out", "w", stdout);
+
+	int n, k;
+	cin>>n>>k;
+	vector<int> arr(n);
+	for(int i = 0; i < n; i++){
+		cin>>arr[i];
+	}
+	sort(arr.begin() , arr.end());
+	
+	arr.push_back(INT_MAX); // To deal with arr.end() case. 
+	vector<int> dp(n+1, 0);
+	int ans = 0;
+	for(int i = n-1; i >= 0; i--){
+		int itr = upper_bound(arr.begin() +i , arr.end() , arr[i] + k) - arr.begin();       now this itr - i coins we can take.  
+		
+		ans = max(ans , itr - i +  dp[itr]);     // Maximisize to the answer.
+		
+		dp[i] = max(dp[i+1] , itr- i);       // Populate the dp.
+	}
+	cout<<ans<<"\n";
+	
+}
+
+
+
+2. Way using prebuild array. 
+array canTake will tell me what is maximum coin I can take if ith coin is my first coin. 
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+
+
+int32_t main () {
+	freopen("diamond.in", "r", stdin);
+	freopen("diamond.out", "w", stdout);
+
+	int n, k;
+	cin>>n>>k;
+	vector<int> arr(n);
+	for(int i = 0; i < n; i++){
+		cin>>arr[i];
+	}
+	sort(arr.begin() , arr.end());
+	vector<int> canTake(n);
+	int l = 0, r = 0;
+	for(; l < n; l++){
+		while(r < n && arr[r] - arr[l] <= k) r++;      //  try to get last bound for this. 
+		canTake[l] = r -l;   							// Now for l > previous it will always accomodate till previous r , now it can also increase
+	}													// That it will increase according to its need in innre while loop.
+
+
+
+	vector<int> maxTakeAfterI(n+1);    // Maximum coins I can take after x >= i;
+
+
+	for(int i = n-1; i >= 0; i--){
+		maxTakeAfterI[i] = max(maxTakeAfterI[i+1] , canTake[i]);
+	}
+
+	int ans = 0;
+	for(int i = 0; i < n; i++){
+		ans = max(ans , canTake[i] + maxTakeAfterI[i+canTake[i]]);
+	}
+	cout<<ans<<"\n";
+	
+}

@@ -1,0 +1,43 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int32_t main () {
+	freopen("herding.in", "r", stdin);
+	freopen("herding.out", "w", stdout);
+
+	int n;
+	cin>>n;
+
+	vector<int> gap(n);
+	for(int i = 0; i < n; i++){
+		cin>>gap[i];
+	}
+	sort(gap.begin() , gap.end());
+	int tot = 0;
+
+	for(int i = 0; i < n-1; i++){
+		tot += (gap[i+1] - gap[i]-1); // Tot available gap
+	}
+
+	int minAns = INT_MAX;
+	int j =0;
+	if (gap[n - 2] - gap[0] == n - 2 && gap[n - 1] - gap[n - 2] > 2) {
+		minAns = 2;
+	} else if (gap[n - 1] - gap[1] == n - 2 && gap[1] - gap[0] > 2) {
+		minAns = 2;
+	} else {
+		for(int i = 0; i < n; i++){		// Starting of the window
+			while(j < n-1 && gap[j+1] - gap[i] < n){
+				j++;
+			}
+			minAns = min(minAns, n- (j - i + 1));  // These many empty spaces are there. Since j will iterate on the cows only .
+													// So for n size window we want to find the maximum number of cows/ or least number of empty cells.
+		}
+	}
+
+	int maxAns = tot - min(gap[1] - gap[0] -1 , gap[n-1] - gap[n-2] - 1);  // Has to sacrifice one from the right or left.
+	cout<<minAns<<"\n";
+	cout<<maxAns<<"\n";
+
+	
+}

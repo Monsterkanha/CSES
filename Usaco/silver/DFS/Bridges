@@ -1,0 +1,82 @@
+Remember two information are needed why not by (in only)? 
+Because on backtrack if you will update in time then timer is static it will increase then it will create disturbance.
+
+1. in timer that will say the time at which this node has come to the dfs run.
+2. low timer which will tell the lowest time of the ancestor. this will indicate whehter this node can come from any other edge. 
+
+
+eg. 
+     0
+  1
+2    4
+  3 
+See this question with question.
+First run dfs from 0 now update intimers and low timers. At 4 where it will see its childs are visited so it will try to reduce its low time.
+That will tell us the lowest ancester to it.
+
+Forward if child has not visited then first dfs. After dfs child low would have been updated. If childs low is greater than my in time then
+means i am the only one who bring him in the world so this is the bridge.
+
+if this is not the case then I will try to reduce my low time by my child.
+
+
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int32_t main () {
+	// freopen("herding.in", "r", stdin);
+	// freopen("herding.out", "w", stdout);
+	ios_base::sync_with_stdio(0);
+    cin.tie(0);
+	int p, c;
+	while(true){
+		cin>>p>>c;
+		if(p == 0 && c == 0){
+			break;
+		}
+		vector<int> adj[p] , vis(p, 0) , in(p, 0) , low(p, 0);
+		for(int i= 0; i < c; i++){
+			int a,b;
+			cin>>a>>b;
+			adj[a].push_back(b);
+			adj[b].push_back(a);
+		}
+		if(p == 1){
+			cout<<"No"<<"\n";
+			continue;
+		}
+		bool flag = false;
+		int timer = 0;
+		function<void(int, int)> dfs = [&](int i , int par){
+			vis[i] = 1;
+			in[i] = low[i] = timer++;  // This is useful to tell the timing information.
+			
+			for(auto &x: adj[i]){
+				if(x == par) continue;  // If child is actually parent this leave this.
+				if(!vis[x]){      // Already not visited first dfs, now check for low time for child with my in time.
+					dfs(x, i);
+					if(low[x] > in[i]){  // Means it could not find any other parent than me. who is ancester in family.
+						flag = true;
+						return;
+					}
+					low[i] = min(low[i], low[x]);   // Time to reduce low  time.
+				}
+				else{
+					low[i] = min(low[i], in[x]);   // Visited may be i can reduce my low time by his (in time).
+				}
+			}
+		};
+		dfs(0 , -1);
+		
+		if(flag || timer != p){  // if timer is not p, means there could be some part which is not connected to 0. isolated.
+			cout<<"Yes"<<"\n";
+		}
+		else{
+			cout<<"No"<<"\n";
+		}
+
+	}
+}

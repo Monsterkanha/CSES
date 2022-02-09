@@ -1,0 +1,46 @@
+1. Directed graph. Run dfs on every node if we can reach to this node then this is part of the cycle. then true for this node.
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int32_t main () {
+	// freopen("herding.in", "r", stdin);
+	// freopen("herding.out", "w", stdout);
+	ios_base::sync_with_stdio(0);
+    cin.tie(0);
+	int n, k , a,b ,s_a, s_b;
+	cin>>n>>k;
+	vector<int> adj[n+1], vis(n+1) , in(n+1), low(n+1) , incycle(n+1);
+
+	for(int i = 0; i < k; i++){
+		cin>>a>>b>>s_a>>s_b;
+		if(s_a > s_b)	adj[a].push_back(b);
+		else adj[b].push_back(a);
+	}
+	int original_node;
+	function<void(int)> dfs = [&](int node ){
+		vis[node] = 1;
+		for(auto &x: adj[node]){
+			if(!vis[x]){
+				dfs(x);
+			}
+			else{
+				if(x == original_node){
+					incycle[original_node] = 1;
+					return;
+				}
+			}
+		}
+	};
+	for(int i = 1; i <= n; i++){
+		fill(begin(vis), end(vis), false);
+		original_node = i;
+		dfs(i);
+	}
+	int cnt = 0;
+	for(int i = 1; i <= n; i++){
+		cnt += incycle[i];
+	}
+	cout<<cnt<<"\n";
+}
